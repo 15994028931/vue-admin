@@ -17,10 +17,10 @@
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary">搜索</el-button>
+                    <el-button type="primary" @click="filterDate">搜索</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="dialogFormVisible = true">添加</el-button>
+                    <el-button type="primary" @click="dialogShow">添加</el-button>
                 </el-form-item>
             </el-form>
         </el-col>
@@ -53,7 +53,7 @@
                         label="日期"
                         width="180">
                     <template slot-scope="scope">
-                        <span style="margin-left: 10px">{{ scope.row.date }}</span>
+                        <span style="margin-left: 10px">{{ scope.row.date | formatDate }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -91,44 +91,36 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <Dialog :dialog="dialog" :addArticle="addArticle" @updated="getProfileAll"></Dialog>
         </el-col>
-        <el-dialog title="添加" :visible.sync="dialogFormVisible">
-            <el-form label-width="80px" :model="addArticle" ref="addArticle" :rules="articleRule" status-icon>
-                <el-form-item label="标题" prop="title">
-                    <el-input autocomplete="off" v-model="addArticle.title"></el-input>
-                </el-form-item>
-                <el-form-item label="内容" prop="content">
-                    <el-input autocomplete="off" v-model="addArticle.content"></el-input>
-                </el-form-item>
-                <el-form-item label="作者" prop="author">
-                    <el-input autocomplete="off" v-model="addArticle.author"></el-input>
-                </el-form-item>
-                <el-form-item label="备注" prop="remark">
-                    <el-input autocomplete="off" v-model="addArticle.remark"></el-input>
-                </el-form-item>
-                <el-form-item label="类型" prop="type">
-                    <el-select placeholder="文章类型" v-model="addArticle.type">
-                        <el-option label="原创" value="original"></el-option>
-                        <el-option label="借鉴" value="example-by"></el-option>
-                    </el-select>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="addArt('addArticle')">确 定</el-button>
-            </div>
-        </el-dialog>
+        <el-col>
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="pagination.curPage"
+                    :page-sizes="pagination.pageSizes"
+                    :page-size="pagination.pageSize"
+                    :layout="pagination.layout"
+                    :total="pagination.total">
+            </el-pagination>
+        </el-col>
     </section>
 </template>
 <script>
+import Dialog from "../../components/dialog/dialog";
 export default {
   name: "article-edit",
   data() {
     return {
       startTime: "",
       endTime: "",
+      timeTable: [],
       tableData: [],
-      dialogFormVisible: false,
+      dialog: {
+        show: false,
+        title: "",
+        option: "edit"
+      },
       addArticle: {
         title: "",
         content: "",
@@ -136,50 +128,31 @@ export default {
         type: "",
         remark: ""
       },
-      articleRule: {
-        title: [
-          {
-            required: true,
-            trigger: "blur",
-            message: "标题不能为空"
-          },
-          {
-            min: 1,
-            max: 60,
-            message: "标题太长"
-          }
-        ],
-        content: [
-          {
-            required: true,
-            trigger: "blur",
-            message: "内容不能为空"
-          }
-        ],
-        author: [
-          {
-            required: true,
-            trigger: "blur",
-            message: "作者不能为空"
-          },
-          {
-            min: 1,
-            max: 60,
-            message: "用户名太长"
-          }
-        ],
-        type: [
-          {
-            required: true,
-            trigger: "blur",
-            message: "类型不能为空"
-          }
-        ]
+      pagination: {
+        layout: "total, sizes, prev, pager, next, jumper",
+        total: 0,
+        curPage: 1,
+        pageSizes: [5, 10, 20],
+        pageSize: 5
       }
     };
   },
   mounted() {
     this.getProfileAll();
+  },
+  filters: {
+    formatDate: function(value) {
+      if (!value) return;
+      let index = value.indexOf("T");
+      let val = value
+        .split("")
+        .splice(0, index)
+        .join("");
+      return val;
+    }
+  },
+  components: {
+    Dialog
   },
   methods: {
     getProfileAll() {
@@ -188,33 +161,71 @@ export default {
         .then(res => {
           const { data } = res;
           this.tableData = data;
+          this.timeTable = data;
         })
-        .catch(e => console.loh(e));
+        .catch(e => console.log(e));
     },
-    addArt(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          this.$axios
-            .post("/api/profile/add", this.addArticle)
-            .then(res => {
-              console.log(res);
-            })
-            .catch(e => console.log(e));
-          this.dialogFormVisible = !this.dialogFormVisible;
-        } else {
-          return false;
-        }
-      });
+    dialogShow() {
+      this.dialog = {
+        show: true,
+        title: "添加博客",
+        option: "add"
+      };
+      this.addArticle = {
+        title: "",
+        content: "",
+        author: "",
+        type: "",
+        remark: ""
+      };
     },
-    handleEdit() {},
+    handleEdit(index, row) {
+      this.dialog = {
+        show: true,
+        title: "修改当前信息",
+        option: "edit"
+      };
+      this.addArticle = {
+        title: row.title,
+        content: row.content,
+        author: row.author,
+        type: row.type,
+        remark: row.remark,
+        id: row._id
+      };
+    },
     handleDelete(index, row) {
       this.$axios
         .delete(`/api/profile/delete/${row._id}`)
         .then(res => {
           this.getProfileAll();
+          this.$message({
+            type: "success",
+            message: "删除成功"
+          });
           console.log(res);
-        }).catch(e=> console.log(e));
+        })
+        .catch(e => console.log(e));
       console.log(index, row);
+    },
+    handleSizeChange() {},
+    handleCurrentChange() {},
+    filterDate() {
+      if (!this.startTime || !this.endTime) {
+        this.$message({
+          type: "warning",
+          message: "日期不能为空"
+        });
+        return;
+      }
+      const sT = new Date(this.startTime).getTime();
+      const eT = new Date(this.endTime).getTime();
+      this.tableData = this.timeTable.filter(item => {
+        return (
+          new Date(item.date).getTime() >= sT &&
+          new Date(item.date).getTime() <= eT
+        );
+      });
     }
   }
 };
