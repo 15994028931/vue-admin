@@ -2,7 +2,7 @@
     <div class="iamge-wrap">
         <el-row>
             <el-col :span="24">
-                <el-upload ref="uploadImg"
+                <!--<el-upload ref="uploadImg"
                         :action="actionUrl"
                         list-type="picture-card"
                         :on-remove="handleRemove">
@@ -10,7 +10,8 @@
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible">
                     <img width="100%"  alt="">
-                </el-dialog>
+                </el-dialog>-->
+                <input type="file" ref="file"><button @click="uploadFile">add </button>
             </el-col>
         </el-row>
     </div>
@@ -25,8 +26,10 @@ export default {
     };
   },
   methods: {
-    uploadFile(file) {
-      const formData = new FormData(file);
+    uploadFile() {
+        let file = this.$refs.file.files[0];
+      const formData = new FormData();
+      formData.append('file',file);
       let config = {
         headers: {
           "Content-Type": "multipart/form-data"
@@ -36,11 +39,7 @@ export default {
         .post(this.actionUrl, formData, config)
         .then(() => {})
         .catch(e => console.log(e));
-    },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePictureCardPreview() {}
+    }
   }
 };
 </script>
