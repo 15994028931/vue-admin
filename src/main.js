@@ -8,7 +8,9 @@ import ElementUi from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 Vue.config.productionTip = false;
 Vue.use(ElementUi);
+const baseUrl = 'http://localhost:3000';
 Vue.prototype.$axios = axios;
+Vue.prototype.baseUrl = baseUrl;
 new Vue({
   router,
   store,

@@ -29,18 +29,14 @@
                             class="el-menu-vertical-demo"
                             @open="handleOpen"
                             @close="handleClose">
-                        <el-submenu index="1">
-                            <template slot="title">
-                                <i class="el-icon-location"></i>
-                                <router-link to="/" tag="span">Blog-list</router-link>
-                            </template>
-                        </el-submenu>
-                        <el-submenu index="2">
-                            <template slot="title">
-                                <i class="el-icon-menu"></i>
-                                <router-link to="/userInfo" tag="span">User-info</router-link>
-                            </template>
-                        </el-submenu>
+                            <router-link v-for="nav in userInfo()" :to="nav.path" tag="div" :key="nav.index">
+                                <el-submenu :index="nav.index">
+                                    <template slot="title">
+                                        <i :class="nav.icon"></i>
+                                        <span>{{nav.title}}</span>
+                                    </template>
+                                </el-submenu>
+                            </router-link>
                     </el-menu>
                 </aside>
                 <section class="content-container">
@@ -65,12 +61,14 @@
     </div>
 </template>
 <script>
+import { navMenu } from "../common/js/nav";
 export default {
-  name: "",
+  name: "home",
   data() {
     return {
       sysName: "VUEADMIN",
-      collapsed: false
+      collapsed: false,
+      Menu: []
     };
   },
   computed: {
@@ -93,7 +91,10 @@ export default {
       }
     },
 
-    userInfo() {},
+    userInfo() {
+      this.Menu = navMenu;
+      return this.Menu;
+    },
     settings() {},
     userLogout() {
       localStorage.removeItem("eleToken");

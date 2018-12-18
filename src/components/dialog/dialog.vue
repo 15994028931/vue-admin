@@ -36,7 +36,7 @@
 </template>
 <script>
 export default {
-  name: "dialog",
+  name: "Dialog",
   props: {
     dialog: {
       type: Object
@@ -96,7 +96,7 @@ export default {
           const flag =
             this.dialog.option === "add" ? "add" : `edit/${this.addArticle.id}`;
           this.$axios
-            .post(`/api/profile/${flag}`, this.addArticle)
+            .post(`${this.baseUrl}/api/profile/${flag}`, this.addArticle)
             .then(() => {
               if (flag === "add") {
                 this.$message({

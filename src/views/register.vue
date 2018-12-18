@@ -90,17 +90,18 @@ export default {
     onSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$axios.post("/api/user/register", this.form)
+          this.$axios
+            .post(`${this.baseUrl}/api/user/register`, this.form)
             .then(res => {
-              if(res.status === 200) {
+              if (res.status === 200) {
                 this.$message({
-                  message:'注册成功',
-                  type:'success'
+                  message: "注册成功",
+                  type: "success"
                 });
-                this.$router.push('/login');
+                this.$router.push("/login");
               }
             })
-            .catch(err=>console.log(err));
+            .catch(err => console.log(err));
         } else {
           console.log("error submit!!");
           return false;

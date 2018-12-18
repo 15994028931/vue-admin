@@ -6,6 +6,7 @@ import Login from "./views/login";
 import Home from "./views/home";
 import UserInfo from "./components/userinfo/user-info";
 import ArticleEdit from "./components/articleedit/article-edit";
+import ImageManager from "./components/image-manager/image-manager";
 Vue.use(Router);
 
 const router = new Router({
@@ -26,6 +27,11 @@ const router = new Router({
           path: "/userInfo",
           name: "userInfo",
           component: UserInfo
+        },
+        {
+          path: "/img",
+          name: "image-manager",
+          component: ImageManager
         }
       ]
     },

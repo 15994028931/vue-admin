@@ -53,6 +53,7 @@
                         label="日期"
                         width="180">
                     <template slot-scope="scope">
+                        <i class="el-icon-time"></i>
                         <span style="margin-left: 10px">{{ scope.row.date | formatDate }}</span>
                     </template>
                 </el-table-column>
@@ -67,7 +68,7 @@
                         label="是否原创"
                         width="180">
                     <template slot-scope="scope">
-                        <span style="margin-left: 10px">{{ scope.row.type }}</span>
+                        <span style="margin-left: 10px">{{ scope.row.type | changeText }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -149,6 +150,10 @@ export default {
         .splice(0, index)
         .join("");
       return val;
+    },
+    changeText: function(value) {
+      if (!value) return;
+      return value.toString().trim() === "original" ? "原创" : "借鉴";
     }
   },
   components: {
@@ -157,7 +162,7 @@ export default {
   methods: {
     getProfileAll() {
       this.$axios
-        .get("/api/profile/")
+        .get(`${this.baseUrl}/api/profile`)
         .then(res => {
           const { data } = res;
           this.tableData = data;
@@ -196,7 +201,7 @@ export default {
     },
     handleDelete(index, row) {
       this.$axios
-        .delete(`/api/profile/delete/${row._id}`)
+        .delete(`${this.baseUrl}/api/profile/delete/${row._id}`)
         .then(res => {
           this.getProfileAll();
           this.$message({

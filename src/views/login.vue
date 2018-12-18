@@ -54,7 +54,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$axios
-            .post("/api/user/login", this.form)
+            .post(`${this.baseUrl}/api/user/login`, this.form)
             .then(res => {
               if (res.status === 200) {
                 this.$message({
