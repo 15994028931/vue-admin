@@ -7,6 +7,7 @@ import Home from "./views/home";
 import UserInfo from "./components/userinfo/user-info";
 import ArticleEdit from "./components/articleedit/article-edit";
 import ImageManager from "./components/image-manager/image-manager";
+import TransforData from "./components/transfor-data/transfor-data";
 Vue.use(Router);
 
 const router = new Router({
@@ -32,6 +33,11 @@ const router = new Router({
           path: "/img",
           name: "image-manager",
           component: ImageManager
+        },
+        {
+          path: "/tdata",
+          name: "TransforData",
+          component: TransforData
         }
       ]
     },

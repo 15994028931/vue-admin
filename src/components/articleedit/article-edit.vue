@@ -109,6 +109,7 @@
 </template>
 <script>
 import Dialog from "../../components/dialog/dialog";
+import {formateDate, updateText} from "../../common/js/myFilter";
 export default {
   name: "article-edit",
   data() {
@@ -142,18 +143,11 @@ export default {
     this.getProfileAll();
   },
   filters: {
-    formatDate: function(value) {
-      if (!value) return;
-      let index = value.indexOf("T");
-      let val = value
-        .split("")
-        .splice(0, index)
-        .join("");
-      return val;
+    formatDate(value) {
+      return formateDate(value);
     },
     changeText: function(value) {
-      if (!value) return;
-      return value.toString().trim() === "original" ? "原创" : "借鉴";
+      return updateText(value);
     }
   },
   components: {

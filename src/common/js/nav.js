@@ -19,5 +19,12 @@ export const navMenu = [
     icon: "el-icon-document",
     title: "Image-manger",
     children: []
+  },
+  {
+    path: "/tdata",
+    index: "4",
+    icon: "el-icon-document",
+    title: "Transform-data",
+    children: []
   }
 ];
