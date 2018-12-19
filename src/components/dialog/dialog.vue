@@ -12,7 +12,7 @@
                     <el-input autocomplete="off" v-model="addArticle.title"></el-input>
                 </el-form-item>
                 <el-form-item label="内容" prop="content">
-                    <el-input autocomplete="off" v-model="addArticle.content"></el-input>
+                    <el-input type="textarea" autocomplete="off" v-model="addArticle.content"></el-input>
                 </el-form-item>
                 <el-form-item label="作者" prop="author">
                     <el-input autocomplete="off" v-model="addArticle.author"></el-input>

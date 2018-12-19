@@ -109,7 +109,7 @@
 </template>
 <script>
 import Dialog from "../../components/dialog/dialog";
-import {formateDate, updateText} from "../../common/js/myFilter";
+import { formateDate, updateText } from "../../common/js/myFilter";
 export default {
   name: "article-edit",
   data() {
@@ -197,15 +197,15 @@ export default {
       this.$axios
         .delete(`${this.baseUrl}/api/profile/delete/${row._id}`)
         .then(res => {
-          this.getProfileAll();
-          this.$message({
-            type: "success",
-            message: "删除成功"
-          });
-          console.log(res);
+          if (res.status === 200) {
+            this.getProfileAll();
+            this.$message({
+              type: "success",
+              message: "删除成功"
+            });
+          }
         })
         .catch(e => console.log(e));
-      console.log(index, row);
     },
     handleSizeChange() {},
     handleCurrentChange() {},

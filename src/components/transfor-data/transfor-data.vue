@@ -6,6 +6,7 @@
                     <el-col :span="24">
                         <com-table :table-data="profileData"
                                    :is-operator="operator"
+                                   :is-edit="isEdits"
                         @buttonEdit="buttonEdit"
                         @buttonDelete="buttonDelete"
                         @buttonUpdate="buttonUpdate"
@@ -16,7 +17,11 @@
             <el-tab-pane label="Article" name="article">
                 <el-row>
                     <el-col :span="24">
-                        <com-table :table-data="articleData"></com-table>
+                        <com-table :table-data="articleData"
+                                   @buttonEdit="buttonEdit"
+                                   @buttonDelete="buttonDelete"
+                                   @buttonUpdate="buttonUpdate"
+                        ></com-table>
                     </el-col>
                 </el-row>
             </el-tab-pane>
@@ -33,7 +38,8 @@ export default {
       profileData: [],
       articleData: [],
       activeName: "profile",
-      operator: true
+      operator: true,
+      isEdits: 1
     };
   },
   components: {
@@ -50,32 +56,77 @@ export default {
           const { data } = res;
           this.profileData = data.ProfileData;
           this.articleData = data.ArticleData;
-          console.log(this.profileData);
         })
         .catch(e => {
           console.log(e);
         });
     },
-    handleClick () {
+    handleClick() {
       this.getAllData();
     },
     buttonEdit(data) {
-      console.log(data[1]);
+      const [index, row, isEdit] = data;
+      console.log(isEdit);
     },
     buttonDelete(data) {
-      console.log(data);
+      const [index, row, isEdit] = data;
+      switch (isEdit) {
+        case 0:
+          this.articleDeleteOne(row);
+          break;
+        case 1:
+          break;
+      }
+    },
+    articleDeleteOne(row) {
+      this.$axios
+        .delete(`${this.baseUrl}/api/article/delete/${row.tokenId}`)
+        .then(res => {
+          if (res.status === 200) {
+            this.$message({
+              type: "success",
+              message: "数据删除成功"
+            });
+            this.getAllData();
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
     },
     buttonUpdate(data) {
-      console.log(data);
-      this.updateOne(data[1]);
+      const [index, row, isEdit] = data;
+      this.updateOne(row);
     },
     updateOne(data) {
       this.$axios
-        .post(`${this.baseUrl}/api/trasfor/single/${data._id}`,{
+        .post(`${this.baseUrl}/api/trasfor/single/${data._id}`, {
           data
         })
         .then(res => {
-          console.log(res);
+          if (res.status === 200) {
+            const { data } = res;
+            switch (data.err_code) {
+              case 0:
+                this.$message({
+                  type: "success",
+                  message: "数据同步成功"
+                });
+                break;
+              case 1:
+                this.$message({
+                  type: "warning",
+                  message: "数据已存在目标文档"
+                });
+                break;
+              case 2:
+                this.$message({
+                  type: "error",
+                  message: "出现未知错误"
+                });
+                break;
+            }
+          }
         })
         .catch(e => console.log(e));
     }
