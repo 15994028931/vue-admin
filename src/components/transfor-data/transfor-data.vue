@@ -7,9 +7,9 @@
                         <com-table :table-data="profileData"
                                    :is-operator="operator"
                                    :is-edit="isEdits"
-                        @buttonEdit="buttonEdit"
-                        @buttonDelete="buttonDelete"
-                        @buttonUpdate="buttonUpdate"
+                                   @buttonEdit="buttonEdit"
+                                   @buttonDelete="buttonDelete"
+                                   @buttonUpdate="buttonUpdate"
                         ></com-table>
                     </el-col>
                 </el-row>
@@ -66,10 +66,11 @@ export default {
     },
     buttonEdit(data) {
       const [index, row, isEdit] = data;
-      console.log(isEdit);
+      console.log(index, row, isEdit);
     },
     buttonDelete(data) {
       const [index, row, isEdit] = data;
+      console.log(index);
       switch (isEdit) {
         case 0:
           this.articleDeleteOne(row);
@@ -96,6 +97,7 @@ export default {
     },
     buttonUpdate(data) {
       const [index, row, isEdit] = data;
+      console.log(index, isEdit);
       this.updateOne(row);
     },
     updateOne(data) {

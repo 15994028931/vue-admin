@@ -11,7 +11,8 @@
                 <el-dialog :visible.sync="dialogVisible">
                     <img width="100%"  alt="">
                 </el-dialog>-->
-                <input type="file" ref="file"><button @click="uploadFile">add </button>
+                <input type="file" ref="file">
+                <button @click="uploadFile">add</button>
             </el-col>
         </el-row>
     </div>
@@ -27,9 +28,9 @@ export default {
   },
   methods: {
     uploadFile() {
-        let file = this.$refs.file.files[0];
+      let file = this.$refs.file.files[0];
       const formData = new FormData();
-      formData.append('file',file);
+      formData.append("file", file);
       let config = {
         headers: {
           "Content-Type": "multipart/form-data"
@@ -37,7 +38,9 @@ export default {
       };
       this.$axios
         .post(this.actionUrl, formData, config)
-        .then(() => {})
+        .then(res => {
+          console.log(res);
+        })
         .catch(e => console.log(e));
     }
   }
